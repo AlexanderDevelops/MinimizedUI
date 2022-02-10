@@ -1,4 +1,5 @@
 local UserInputService = game:GetService("UserInputService")
+local TextService = game:GetService("TextService")
 
 local Player = game.Players.LocalPlayer
 
@@ -39,6 +40,237 @@ function UIListLayout(Settings)
 			return UIListLayout
 		end
 	end
+end
+
+function CreateInfo(Name, Info, Component)
+	local Text
+	
+	if Info.Text then
+		Text = Info.Text
+	else
+		Text = "None provided."
+	end
+	
+	local Frame = Instance.new("Frame")
+	Frame.Name = Name
+	Frame.Size = UDim2.new(1, -65, 0, 54)
+	Frame.Position = UDim2.new(0, 50, 1, 0)
+	Frame.AnchorPoint = Vector2.new(0, 1)
+	Frame.BorderSizePixel = 0
+	Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+	Frame.ZIndex = 20
+	Frame.Visible = false
+	
+	Component.Changed:Connect(function(c)
+		if c == "Parent" and Component.Parent == nil then
+			Frame:Destroy()
+		end
+	end)
+	
+	local b = Border({
+		Parent = Frame,
+		Position = UDim2.new(0, 0, 0, 0),
+		Size = UDim2.new(0, 1, 1, 0),
+		AnchorPoint = Vector2.new(0, 0),
+		ReturnAsObject = true
+	})
+	
+	b.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+	b.ZIndex = 21
+	
+	b = Border({
+		Parent = Frame,
+		Position = UDim2.new(1, 0, 0, 0),
+		Size = UDim2.new(0, 1, 1, 0),
+		AnchorPoint = Vector2.new(0, 0),
+		ReturnAsObject = true
+	})
+	
+	b.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+	b.ZIndex = 21
+	
+	b = Border({
+		Parent = Frame,
+		Position = UDim2.new(0, 0, 0, 0),
+		Size = UDim2.new(1, 0, 0, 1),
+		AnchorPoint = Vector2.new(0, 0),
+		ReturnAsObject = true
+	})
+
+	b.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+	b.ZIndex = 21
+	
+	local Title = Instance.new("TextLabel")
+	Title.Parent = Frame
+	Title.Name = "Title"
+	Title.Text = Name
+	Title.TextColor3 = Color3.fromRGB(195, 195, 195)
+	Title.TextSize = 12
+	Title.Font = Enum.Font.GothamSemibold
+	Title.Position = UDim2.new(0, 12, 0, 12)
+	Title.Size = UDim2.new(1, -24, 0, 12)
+	Title.BackgroundTransparency = 1
+	Title.TextXAlignment = Enum.TextXAlignment.Left
+	Title.ZIndex = 21
+	
+	local TextLabel = Instance.new("TextLabel")
+	TextLabel.Parent = Frame
+	TextLabel.Name = "Text"
+	TextLabel.TextWrapped = true
+	TextLabel.TextSize = 12
+	TextLabel.Font = Enum.Font.GothamSemibold
+	TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+	TextLabel.Position = UDim2.new(0, 12, 0, 30)
+	TextLabel.BackgroundTransparency = 1
+	TextLabel.TextXAlignment = Enum.TextXAlignment.Left
+	TextLabel.TextYAlignment = Enum.TextYAlignment.Top
+	TextLabel.ZIndex = 21
+	TextLabel.Text = Text
+	TextLabel.Size = UDim2.new(1, -24, 0, 12)
+	
+	--
+	
+	local Offset
+	
+	local TextLabel2 = Instance.new("TextLabel")
+	TextLabel2.Parent = Player.PlayerGui.UI
+	TextLabel2.Name = "Text"
+	TextLabel2.TextWrapped = true
+	TextLabel2.TextSize = 12
+	TextLabel2.Font = Enum.Font.GothamSemibold
+	TextLabel2.TextColor3 = Color3.fromRGB(255, 255, 255)
+	TextLabel2.Position = UDim2.new(0, 12, 0, 30)
+	TextLabel2.BackgroundTransparency = 1
+	TextLabel2.TextXAlignment = Enum.TextXAlignment.Left
+	TextLabel2.TextYAlignment = Enum.TextYAlignment.Top
+	TextLabel2.ZIndex = 21
+	TextLabel2.Text = Text
+	TextLabel2.Size = UDim2.new(0, 226, 1, 0)
+	
+	TextLabel.Size = UDim2.new(1, -24, 0, TextLabel2.TextBounds.Y)
+	Frame.Size = UDim2.new(1, -65, 0, 54 + (TextLabel2.TextBounds.Y - 12))
+		
+	Offset = TextLabel2.TextBounds.Y - 12
+	
+	TextLabel2:Destroy()
+	
+	--
+	
+	local Folder = Instance.new("Folder")
+	Folder.Parent = Frame
+	Folder.Name = "Buttons"
+	
+	local Button1 = Instance.new("TextButton")
+	Button1.Parent = Folder
+	Button1.Size = UDim2.new(0, 50, 1, 250 - Frame.Size.Y.Offset)
+	Button1.Position = UDim2.new(0, 0, 1, 0)
+	Button1.AnchorPoint = Vector2.new(1, 1)
+	Button1.TextTransparency = 1
+	Button1.BackgroundTransparency = 1
+	Button1.ZIndex = 21
+	
+	local Button2 = Instance.new("TextButton")
+	Button2.Parent = Folder
+	Button2.Size = UDim2.new(1, 0, 1, 250 - (Frame.Size.Y.Offset * 2))
+	Button2.Position = UDim2.new(0, 0, 0, 0)
+	Button2.AnchorPoint = Vector2.new(0, 1)
+	Button2.TextTransparency = 1
+	Button2.BackgroundTransparency = 1
+	Button2.ZIndex = 21
+	
+	local Button3 = Instance.new("TextButton")
+	Button3.Parent = Folder
+	Button3.Size = UDim2.new(0, 15, 1, 250 - Frame.Size.Y.Offset)
+	Button3.Position = UDim2.new(1, 0, 1, 0)
+	Button3.AnchorPoint = Vector2.new(0, 1)
+	Button3.TextTransparency = 1
+	Button3.BackgroundTransparency = 1
+	Button3.ZIndex = 21
+	
+	--
+	
+	if Info.Buttons then
+		local AmountLoaded = 0
+		
+		for _,v in pairs(Info.Buttons) do
+			if typeof(v) == "table" then
+				local Name
+				
+				if v.Name then
+					Name = v.Name
+				else
+					Name = "Button"
+				end
+				
+				--
+
+				local Button = Instance.new("Frame")
+				Button.Parent = Frame
+				Button.Name = Name
+				Button.Size = UDim2.new(1, 0, 0, 31)
+				Button.BackgroundTransparency = 1
+				Button.LayoutOrder = (#Frame:GetChildren() + 1)
+				Button.Position = UDim2.new(0, 0, 0, (54 + Offset) + (31 * AmountLoaded))
+				Button.ZIndex = 21
+
+				local TextLabel = Instance.new("TextLabel")
+				TextLabel.Parent = Button
+				TextLabel.Name = "TextLabel"
+				TextLabel.Text = Name
+				TextLabel.TextSize = 12
+				TextLabel.Size = UDim2.new(1, -10, 1, -1)
+				TextLabel.Position = UDim2.new(0, 10, 0, 1)
+				TextLabel.Font = Enum.Font.GothamSemibold
+				TextLabel.BackgroundTransparency = 1
+				TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+				TextLabel.TextXAlignment = Enum.TextXAlignment.Left
+				TextLabel.ZIndex = 21
+
+				b = Border({
+					Parent = Button,
+					Position = UDim2.new(0, 0, 0, 0),
+					Size = UDim2.new(1, 0, 0, 1),
+					AnchorPoint = Vector2.new(0, 0),
+					ReturnAsObject = true
+				})
+				
+				b.BackgroundColor3 = Color3.fromRGB(40, 40, 40)			
+				b.ZIndex = 21
+
+				local RealButton = Instance.new("TextButton")
+				RealButton.Parent = Button
+				RealButton.Name = "Button"
+				RealButton.BackgroundTransparency = 1
+				RealButton.TextTransparency = 1
+				RealButton.Size = UDim2.new(1, 0, 1, 0)
+				RealButton.ZIndex = 10
+				RealButton.ZIndex = 22
+				
+				AmountLoaded += 1
+				Frame.Size = UDim2.new(1, -65, 0, (54 + Offset) + (31 * AmountLoaded))
+				
+				RealButton.MouseButton1Click:Connect(function()
+					if v.Callback then
+						if typeof(v.Callback) == "function" then
+							v.Callback(Component)
+						end
+					end
+				end)
+			end
+		end
+	end
+	
+	--
+	
+	local function Hide()
+		Frame.Visible = false
+	end
+	
+	Button1.MouseButton1Click:Connect(Hide)
+	Button2.MouseButton1Click:Connect(Hide)
+	Button3.MouseButton1Click:Connect(Hide)
+	
+	return Frame
 end
 
 return function()
@@ -102,6 +334,10 @@ return function()
 		local Pages = Instance.new("Folder")
 		Pages.Parent = Container
 		Pages.Name = "Pages"
+		
+		local InfoFolder = Instance.new("Folder")
+		InfoFolder.Parent = Container
+		InfoFolder.Name = "Info"
 
 		local Scrollbar = Instance.new("Frame")
 		Scrollbar.Parent = Container
@@ -363,7 +599,7 @@ return function()
 				DropdownFrame.BackgroundTransparency = 1
 				DropdownFrame.Visible = false
 				DropdownFrame.Size = UDim2.new(1, -15, 0, 0)
-
+				
 				--
 
 				DropdownFrame.Changed:Connect(function(c)
@@ -377,6 +613,12 @@ return function()
 						end
 
 						Page.CanvasSize = UDim2.new(0, 0, 0, y)
+					end
+				end)
+				
+				DropdownFrame.ChildRemoved:Connect(function(obj)
+					if obj:IsA("Frame") then
+						DropdownFrame.Size = UDim2.new(1, -15, 0, DropdownFrame.Size.Y.Offset - obj.Size.Y.Offset)
 					end
 				end)
 
@@ -507,6 +749,52 @@ return function()
 					end)
 
 					DropdownFrame.Size = UDim2.new(1, -15, 0, DropdownFrame.Size.Y.Offset + 31)
+					
+					--
+					
+					if Settings.Info then
+						local Info = CreateInfo(Name, Settings.Info, Button)
+						Info.Parent = InfoFolder
+						
+						local InfoButton = Instance.new("Frame")
+						InfoButton.Parent = Button
+						InfoButton.Name = "InfoButton"
+						InfoButton.BackgroundTransparency = 1
+						InfoButton.Position = UDim2.new(1, 0, 0, 0)
+						InfoButton.AnchorPoint = Vector2.new(1, 0)
+						InfoButton.Size = UDim2.new(0, 30, 0, 30)
+						
+						local Image = Instance.new("ImageLabel")
+						Image.Parent = InfoButton
+						Image.Name = "Image"
+						Image.BackgroundTransparency = 1
+						Image.Image = "rbxassetid://3926307971"
+						Image.ImageRectOffset = Vector2.new(164, 364)
+						Image.ImageRectSize = Vector2.new(36, 36)
+						Image.Rotation = 180
+						Image.Position = UDim2.new(.5, 1, .5, 1)
+						Image.Size = UDim2.new(0, 15, 0, 15)
+						Image.ImageColor3 = Color3.fromRGB(255, 255, 255)
+						Image.AnchorPoint = Vector2.new(.5, .5)
+						
+						local InfoRealButton = Instance.new("TextButton")
+						InfoRealButton.Parent = InfoButton
+						InfoRealButton.BackgroundTransparency = 1
+						InfoRealButton.TextTransparency = 1
+						InfoRealButton.Size = UDim2.new(1, 0, 1, 0)
+						InfoRealButton.ZIndex = 11
+						
+						Border({
+							Parent = InfoButton,
+							Position = UDim2.new(0, 0, 0, 0),
+							Size = UDim2.new(0, 1, 1, 0),
+							AnchorPoint = Vector2.new(0, 0)
+						})
+						
+						InfoRealButton.MouseButton1Click:Connect(function()
+							Info.Visible = true
+						end)
+					end
 				end -- Button
 
 				function Table:Toggle(Settings, Function)
@@ -593,6 +881,56 @@ return function()
 					RealButton.ZIndex = 10
 
 					DropdownFrame.Size = UDim2.new(1, -15, 0, DropdownFrame.Size.Y.Offset + 31)
+					
+					--
+					
+					if Settings.Info then
+						local Info = CreateInfo(Name, Settings.Info, Toggle)
+						Info.Parent = InfoFolder
+
+						local InfoButton = Instance.new("Frame")
+						InfoButton.Parent = Toggle
+						InfoButton.Name = "InfoButton"
+						InfoButton.BackgroundTransparency = 1
+						InfoButton.Position = UDim2.new(1, 0, 0, 0)
+						InfoButton.AnchorPoint = Vector2.new(1, 0)
+						InfoButton.Size = UDim2.new(0, 30, 0, 30)
+
+						local Image = Instance.new("ImageLabel")
+						Image.Parent = InfoButton
+						Image.Name = "Image"
+						Image.BackgroundTransparency = 1
+						Image.Image = "rbxassetid://3926307971"
+						Image.ImageRectOffset = Vector2.new(164, 364)
+						Image.ImageRectSize = Vector2.new(36, 36)
+						Image.Rotation = 180
+						Image.Position = UDim2.new(.5, 1, .5, 1)
+						Image.Size = UDim2.new(0, 15, 0, 15)
+						Image.ImageColor3 = Color3.fromRGB(255, 255, 255)
+						Image.AnchorPoint = Vector2.new(.5, .5)
+
+						local InfoRealButton = Instance.new("TextButton")
+						InfoRealButton.Parent = InfoButton
+						InfoRealButton.BackgroundTransparency = 1
+						InfoRealButton.TextTransparency = 1
+						InfoRealButton.Size = UDim2.new(1, 0, 1, 0)
+						InfoRealButton.ZIndex = 11
+						
+						ToggleFrame.Position = UDim2.new(1, -40, .5, -1)
+						
+						Border({
+							Parent = InfoButton,
+							Position = UDim2.new(0, 0, 0, 0),
+							Size = UDim2.new(0, 1, 1, 0),
+							AnchorPoint = Vector2.new(0, 0)
+						})
+
+						InfoRealButton.MouseButton1Click:Connect(function()
+							Info.Visible = true
+						end)
+					end
+					
+					--
 
 					RealButton.MouseButton1Click:Connect(function()
 						if Toggled == true then
@@ -719,7 +1057,60 @@ return function()
 					Fill.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 					Fill.Size = UDim2.new(Default / Max, 0, 1, 0)
 					Fill.BorderSizePixel = 0
+					
+					--
+					
+					DropdownFrame.Size = UDim2.new(1, -15, 0, DropdownFrame.Size.Y.Offset + 31)
+					
+					--
+					
+					if Settings.Info then
+						local Info = CreateInfo(Name, Settings.Info, Slider)
+						Info.Parent = InfoFolder
 
+						local InfoButton = Instance.new("Frame")
+						InfoButton.Parent = Slider
+						InfoButton.Name = "InfoButton"
+						InfoButton.BackgroundTransparency = 1
+						InfoButton.Position = UDim2.new(1, 0, 0, 0)
+						InfoButton.AnchorPoint = Vector2.new(1, 0)
+						InfoButton.Size = UDim2.new(0, 30, 0, 30)
+
+						local Image = Instance.new("ImageLabel")
+						Image.Parent = InfoButton
+						Image.Name = "Image"
+						Image.BackgroundTransparency = 1
+						Image.Image = "rbxassetid://3926307971"
+						Image.ImageRectOffset = Vector2.new(164, 364)
+						Image.ImageRectSize = Vector2.new(36, 36)
+						Image.Rotation = 180
+						Image.Position = UDim2.new(.5, 1, .5, 1)
+						Image.Size = UDim2.new(0, 15, 0, 15)
+						Image.ImageColor3 = Color3.fromRGB(255, 255, 255)
+						Image.AnchorPoint = Vector2.new(.5, .5)
+
+						local InfoRealButton = Instance.new("TextButton")
+						InfoRealButton.Parent = InfoButton
+						InfoRealButton.BackgroundTransparency = 1
+						InfoRealButton.TextTransparency = 1
+						InfoRealButton.Size = UDim2.new(1, 0, 1, 0)
+						InfoRealButton.ZIndex = 11
+
+						Button.Size = UDim2.new(1, -30, 1, -1)
+						Value.Position = UDim2.new(0, -25, 0, 0)
+
+						Border({
+							Parent = InfoButton,
+							Position = UDim2.new(0, 0, 0, 0),
+							Size = UDim2.new(0, 1, 1, 0),
+							AnchorPoint = Vector2.new(0, 0)
+						})
+
+						InfoRealButton.MouseButton1Click:Connect(function()
+							Info.Visible = true
+						end)
+					end
+					
 					--
 
 					Button.MouseButton1Down:Connect(function()
@@ -876,6 +1267,58 @@ return function()
 					Button.TextTransparency = 1
 					Button.BackgroundTransparency = 1
 					Button.ZIndex = 10
+					
+					DropdownFrame.Size = UDim2.new(1, -15, 0, DropdownFrame.Size.Y.Offset + 31)
+					
+					--
+					
+					if Settings.Info then
+						local Info = CreateInfo(Name, Settings.Info, KeyBind)
+						Info.Parent = InfoFolder
+
+						local InfoButton = Instance.new("Frame")
+						InfoButton.Parent = KeyBind
+						InfoButton.Name = "InfoButton"
+						InfoButton.BackgroundTransparency = 1
+						InfoButton.Position = UDim2.new(1, 0, 0, 0)
+						InfoButton.AnchorPoint = Vector2.new(1, 0)
+						InfoButton.Size = UDim2.new(0, 30, 0, 30)
+
+						local Image = Instance.new("ImageLabel")
+						Image.Parent = InfoButton
+						Image.Name = "Image"
+						Image.BackgroundTransparency = 1
+						Image.Image = "rbxassetid://3926307971"
+						Image.ImageRectOffset = Vector2.new(164, 364)
+						Image.ImageRectSize = Vector2.new(36, 36)
+						Image.Rotation = 180
+						Image.Position = UDim2.new(.5, 1, .5, 1)
+						Image.Size = UDim2.new(0, 15, 0, 15)
+						Image.ImageColor3 = Color3.fromRGB(255, 255, 255)
+						Image.AnchorPoint = Vector2.new(.5, .5)
+
+						local InfoRealButton = Instance.new("TextButton")
+						InfoRealButton.Parent = InfoButton
+						InfoRealButton.BackgroundTransparency = 1
+						InfoRealButton.TextTransparency = 1
+						InfoRealButton.Size = UDim2.new(1, 0, 1, 0)
+						InfoRealButton.ZIndex = 11
+
+						KeyLabel.Position = UDim2.new(0, -25, 0, 0)
+
+						Border({
+							Parent = InfoButton,
+							Position = UDim2.new(0, 0, 0, 0),
+							Size = UDim2.new(0, 1, 1, 0),
+							AnchorPoint = Vector2.new(0, 0)
+						})
+
+						InfoRealButton.MouseButton1Click:Connect(function()
+							Info.Visible = true
+						end)
+					end
+					
+					--
 
 					local Changing = false
 
