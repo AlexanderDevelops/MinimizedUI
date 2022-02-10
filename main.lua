@@ -133,7 +133,7 @@ function CreateInfo(Name, Info, Component)
 	local Offset
 	
 	local TextLabel2 = Instance.new("TextLabel")
-	TextLabel2.Parent = Player.PlayerGui.UI
+	TextLabel2.Parent = Player.PlayerGui:FindFirstChildWhichIsA("ScreenGui")
 	TextLabel2.Name = "Text"
 	TextLabel2.TextWrapped = true
 	TextLabel2.TextSize = 12
