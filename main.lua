@@ -565,7 +565,7 @@ return function()
 				Button = Button
 			}
 
-			function Table:Dropdown()
+			function Table:Dropdown(Settings)
 				local Name
 
 				if Settings then
