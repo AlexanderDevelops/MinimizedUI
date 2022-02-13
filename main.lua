@@ -277,6 +277,8 @@ return function()
 	local Table = {}
 
 	function Table:Create(Settings)
+		local GuiName
+		
 		local Name
 		local Parent
 
@@ -296,20 +298,79 @@ return function()
 			Name = "UI"
 			Parent = Player.PlayerGui
 		end
+		
+		GuiName = Name
 
 		local ScreenGui = Instance.new("ScreenGui")
 		ScreenGui.Parent = Parent
 		ScreenGui.Name = Name
 		ScreenGui.IgnoreGuiInset = true
 		ScreenGui.ResetOnSpawn = false
+		
+		local Drag = Instance.new("Frame")
+		Drag.Parent = ScreenGui
+		Drag.Name = "Drag"
+		Drag.Size = UDim2.new(0, 265, 0, 30)
+		Drag.BackgroundTransparency = 1
+		Drag.AnchorPoint = Vector2.new(.5, .5)
+		Drag.Position = UDim2.new(.5, -315/2, .5, -250/2)
+		
+		--
+		
+		do
+			local Drag = Drag
 
+			local gsCoreGui = game:GetService("CoreGui")
+			local gsTween = game:GetService("TweenService")
+
+			local Dragging
+			local dragInput
+			local dragStart
+			local startPos
+
+			local function update(input)
+				local delta = input.Position - dragStart
+				local dragTime = 0
+				local SmoothDrag = {}
+				SmoothDrag.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+				local dragSmoothFunction = gsTween:Create(Drag, TweenInfo.new(dragTime, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), SmoothDrag)
+				dragSmoothFunction:Play()
+			end
+
+			Drag.InputBegan:Connect(function(input)
+				if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+					Dragging = true
+					dragStart = input.Position
+					startPos = Drag.Position
+					input.Changed:Connect(function()
+						if input.UserInputState == Enum.UserInputState.End then
+							Dragging = false
+						end
+					end)
+				end
+			end)
+
+			Drag.InputChanged:Connect(function(input)
+				if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+					dragInput = input
+				end
+			end)
+
+			UserInputService.InputChanged:Connect(function(input)
+				if input == dragInput and Dragging and Drag.Size then
+					update(input)
+				end
+			end)
+		end
+		
+		--
+		
 		local Container = Instance.new("Frame")
-		Container.Parent = ScreenGui
+		Container.Parent = Drag
 		Container.Name = "Container"
 		Container.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 		Container.BorderSizePixel = 0
-		Container.AnchorPoint = Vector2.new(0, 1)
-		Container.Position = UDim2.new(0, 50, 1, -50)
+		Container.Position = UDim2.new(0, -50, 0, 0)
 		Container.Size = UDim2.new(0, 315, 0, 250)
 
 		Border({
@@ -330,6 +391,33 @@ return function()
 			FillDirection = Enum.FillDirection.Vertical,
 			Padding = UDim.new(0, 0)
 		})
+		
+		local Topbar = Instance.new("Frame")
+		Topbar.Parent = Container
+		Topbar.Name = "Topbar"
+		Topbar.Position = UDim2.new(0, 50, 0, 0)
+		Topbar.Size = UDim2.new(1, -50, 0, 30)
+		Topbar.BackgroundTransparency = 1
+		
+		local NamePage = Instance.new("TextLabel")
+		NamePage.Parent = Topbar
+		NamePage.Name = "TextLabel"
+		NamePage.Text = Name .. "  <font color='rgb(200, 200, 200)'>/</font>  "
+		NamePage.TextSize = 12
+		NamePage.Size = UDim2.new(1, -10, 1, 0)
+		NamePage.Position = UDim2.new(0, 10, 0, 0)
+		NamePage.Font = Enum.Font.GothamSemibold
+		NamePage.BackgroundTransparency = 1
+		NamePage.TextColor3 = Color3.fromRGB(255, 255, 255)
+		NamePage.TextXAlignment = Enum.TextXAlignment.Left
+		NamePage.RichText = true
+		
+		Border({
+			Parent = Topbar,
+			Position = UDim2.new(0, 0, 1, 0),
+			Size = UDim2.new(1, 0, 0, 1),
+			AnchorPoint = Vector2.new(0, 0)
+		})
 
 		local Pages = Instance.new("Folder")
 		Pages.Parent = Container
@@ -342,11 +430,70 @@ return function()
 		local Scrollbar = Instance.new("Frame")
 		Scrollbar.Parent = Container
 		Scrollbar.Name = "Scrollbar"
-		Scrollbar.Position = UDim2.new(1, 0, 0, 0)
-		Scrollbar.Size = UDim2.new(0, 15, 1, 0)
+		Scrollbar.Position = UDim2.new(1, 0, 0, 30)
+		Scrollbar.Size = UDim2.new(0, 15, 1, -30)
 		Scrollbar.AnchorPoint = Vector2.new(1, 0)
 		Scrollbar.BackgroundTransparency = 1
 		Scrollbar.ZIndex = 2
+		
+		--
+		
+		local ReSize = Instance.new("TextButton")
+		ReSize.Parent = Container
+		ReSize.Name = "ReSize"
+		ReSize.Size = UDim2.new(0, 15, 0, 15)
+		ReSize.AnchorPoint = Vector2.new(1, 1)
+		ReSize.Position = UDim2.new(1, 0, 1, 0)
+		ReSize.BorderSizePixel = 0
+		ReSize.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+		ReSize.TextTransparency = 1
+		
+		local Mouse = Player:GetMouse()
+		local Held = false
+
+		ReSize.MouseButton1Down:Connect(function()
+			Held = true
+		end)
+
+		ReSize.MouseButton1Up:Connect(function()
+			Held = false
+		end)
+
+		UserInputService.InputEnded:Connect(function(Key, GameProcessing)
+			if Key.UserInputType == Enum.UserInputType.MouseButton1 then
+				Held = false
+			end
+		end)
+
+		Mouse.Move:Connect(function()
+			if Held == true then
+				local X = Mouse.X - ReSize.AbsolutePosition.X
+				local Y = Mouse.Y - ReSize.AbsolutePosition.Y
+
+				local AddX = 0		
+				local AddY = 0
+
+				if (Container.Size.X.Offset + X) < 315 then
+					AddX = 315
+				elseif (Container.Size.X.Offset + X) > 445 then
+					AddX = 445
+				else
+					AddX = Container.Size.X.Offset + X
+				end
+
+				if (Container.Size.Y.Offset + Y) < 250 then
+					AddY = 250
+				elseif (Container.Size.Y.Offset + Y) > 380 then
+					AddY = 380
+				else
+					AddY = Container.Size.Y.Offset + Y
+				end
+
+				Container.Size = UDim2.new(0, AddX, 0, AddY)
+			end
+		end)
+		
+		--
 
 		Border({
 			Parent = Scrollbar,
@@ -418,17 +565,17 @@ return function()
 			Page.Parent = Pages
 			Page.Name = Name
 			Page.CanvasSize = UDim2.new(0, 0, 0, 0)
-			Page.Size = UDim2.new(1, -50, 1, 0)
+			Page.Size = UDim2.new(1, -50, 1, -30)
 			Page.BorderSizePixel = 0
 			Page.BackgroundTransparency = 1
-			Page.Position = UDim2.new(0, 50, 0, 0)
+			Page.Position = UDim2.new(0, 50, 0, 30)
 			Page.Visible = false
 			Page.CanvasSize = UDim2.new(0, 0, 0, 0)
 			Page.ScrollBarImageColor3 = Color3.fromRGB(25, 25, 25)
 			Page.ScrollBarThickness = 15
 			Page.TopImage = "http://www.roblox.com/asset/?id=4857804783"
 			Page.MidImage = "http://www.roblox.com/asset/?id=4857804783"
-			Page.BottomImage = "http://www.roblox.com/asset/?id=4857804783"
+			Page.BottomImage = ""
 
 			UIListLayout({
 				Parent = Page,
@@ -509,6 +656,7 @@ return function()
 				Page.Visible = true
 				Button.BackgroundTransparency = 0
 				Image.ImageColor3 = Color3.fromRGB(255, 255, 255)
+				NamePage.Text = GuiName .. "  <font color='rgb(200, 200, 200)'>/</font>  " .. Name
 
 				for _,v in pairs(Borders) do
 					v.BackgroundTransparency = 0
@@ -616,12 +764,6 @@ return function()
 					end
 				end)
 				
-				DropdownFrame.ChildRemoved:Connect(function(obj)
-					if obj:IsA("Frame") then
-						DropdownFrame.Size = UDim2.new(1, -15, 0, DropdownFrame.Size.Y.Offset - obj.Size.Y.Offset)
-					end
-				end)
-
 				--
 
 				UIListLayout({
@@ -644,7 +786,15 @@ return function()
 				TextLabel.RichText = true
 
 				--
-
+				
+				DropdownFrame.ChildRemoved:Connect(function(obj)
+					TextLabel.Text = Name .. " <font color='rgb(200, 200, 200)'>" .. #DropdownFrame:GetChildren() - 1 .. "</font>"
+					
+					if obj:IsA("Frame") then
+						DropdownFrame.Size = UDim2.new(1, -15, 0, DropdownFrame.Size.Y.Offset - obj.Size.Y.Offset)
+					end
+				end)
+				
 				DropdownFrame.ChildAdded:Connect(function()
 					TextLabel.Text = Name .. " <font color='rgb(200, 200, 200)'>" .. #DropdownFrame:GetChildren() - 1 .. "</font>"
 				end)
@@ -1050,13 +1200,20 @@ return function()
 					Button.Size = UDim2.new(1, 0, 1, -1)
 					Button.TextTransparency = 1
 					Button.BackgroundTransparency = 1
-
+					
 					local Fill = Instance.new("Frame")
 					Fill.Parent = Button
 					Fill.Name = "Fill"
 					Fill.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-					Fill.Size = UDim2.new(Default / Max, 0, 1, 0)
 					Fill.BorderSizePixel = 0
+					
+					if Default == Min then
+						Fill.Size = UDim2.new(0, 0, 1, 0)
+					elseif Default == Max then
+						Fill.Size = UDim2.new(1, 0, 1, 0)
+					else
+						Fill.Size = UDim2.new(Default / Max, 0, 1, 0)
+					end
 					
 					--
 					
@@ -1150,10 +1307,8 @@ return function()
 					end)
 
 					UserInputService.InputEnded:Connect(function(Key, GameProcessing)
-						if not GameProcessing then
-							if Key.UserInputType == Enum.UserInputType.MouseButton1 then
-								Held = false
-							end
+						if Key.UserInputType == Enum.UserInputType.MouseButton1 then
+							Held = false
 						end
 					end)
 
